@@ -1,0 +1,15 @@
+# Signing and release artifacts
+*.pem
+*.crx
+*.zip
+
+# Generated validation images and reports
+artifacts/
+
+# Imported reference skill
+developer-skill-v1.4/
+developer-skill-v1.4.zip
+
+# Operating system files
+.DS_Store
+Thumbs.db

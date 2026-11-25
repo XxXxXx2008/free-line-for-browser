@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "橙线分屏",
+  "short_name": "橙线分屏",
+  "version": "1.8.0",
+  "description": "用一条可拖动、可旋转的橙色细线同时查看两个网页。",
+  "minimum_chrome_version": "102",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "打开橙线分屏",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png"
+    }
+  },
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; frame-src 'self' http: https:;"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "all_frames": true,
+      "run_at": "document_start",
+      "js": [
+        "frame-bridge.js"
+      ]
+    }
+  ]
+}

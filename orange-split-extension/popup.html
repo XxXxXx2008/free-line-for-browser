@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>橙线分屏</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="popup">
+      <header class="hero">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <div>
+            <p class="eyebrow">ORANGE SPLIT</p>
+            <h1>橙线分屏</h1>
+          </div>
+        </div>
+        <p class="intro">一条橙线，两个网页。拖动改变位置，旋转改变角度。</p>
+      </header>
+
+      <form id="splitForm" novalidate>
+        <div class="field">
+          <div class="field-heading">
+            <label class="field-label" for="pageA">
+              <span class="pane-dot pane-dot-a" aria-hidden="true"></span>
+              网页 A
+            </label>
+            <button class="current-site-button" type="button" data-target="pageA">
+              当前网站
+            </button>
+          </div>
+          <input
+            id="pageA"
+            name="pageA"
+            type="text"
+            inputmode="url"
+            autocomplete="url"
+            spellcheck="false"
+            placeholder="例如 https://example.com"
+          >
+        </div>
+
+        <div class="field">
+          <div class="field-heading">
+            <label class="field-label" for="pageB">
+              <span class="pane-dot pane-dot-b" aria-hidden="true"></span>
+              网页 B
+            </label>
+            <button class="current-site-button" type="button" data-target="pageB">
+              当前网站
+            </button>
+          </div>
+          <input
+            id="pageB"
+            name="pageB"
+            type="text"
+            inputmode="url"
+            autocomplete="url"
+            spellcheck="false"
+            placeholder="例如 https://www.w3.org"
+          >
+        </div>
+
+        <p id="formMessage" class="message" role="status" aria-live="polite"></p>
+
+        <div class="actions">
+          <button class="secondary" id="swapButton" type="button">交换 A / B</button>
+          <button class="primary" type="submit">开始分屏</button>
+        </div>
+      </form>
+
+      <section class="slots-panel" aria-labelledby="slotsTitle">
+        <div class="slots-header">
+          <div>
+            <strong id="slotsTitle">常用网址</strong>
+            <span>保存 A / B 组合，点击“载入”恢复</span>
+          </div>
+        </div>
+        <div id="slotList" class="slot-list"></div>
+      </section>
+
+      <section class="tips" aria-label="使用提示">
+        <p><strong>拖动</strong>橙线移动分割位置，默认拖动线两端的小点旋转。</p>
+        <p>留空时会打开内置演示页。网站若禁止被嵌入，请从分屏页设置中在新标签打开。</p>
+      </section>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

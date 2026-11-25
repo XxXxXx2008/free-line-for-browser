@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="light">
+    <title>橙线分屏</title>
+    <link rel="stylesheet" href="split.css">
+  </head>
+  <body data-rotation-mode="two-point">
+    <main id="splitStage" class="split-stage">
+      <div id="clipA" class="pane-mask-anchor">
+        <div id="maskA" class="pane-mask-body">
+          <iframe
+            id="paneA"
+            class="web-pane"
+            title="网页 A"
+            src="demo-a.html"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allow="clipboard-write; fullscreen"
+          ></iframe>
+        </div>
+      </div>
+      <div id="clipB" class="pane-mask-anchor">
+        <div id="maskB" class="pane-mask-body">
+          <iframe
+            id="paneB"
+            class="web-pane"
+            title="网页 B"
+            src="demo-b.html"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allow="clipboard-write; fullscreen"
+          ></iframe>
+        </div>
+      </div>
+
+      <div id="divider" class="divider" role="separator" aria-label="可拖动和旋转的橙色分屏线">
+        <div id="dividerRotor" class="divider-rotor">
+          <div id="dragRail" class="drag-rail" title="拖动分屏线"></div>
+          <div id="audioBars" class="audio-bars" aria-hidden="true"></div>
+          <button
+            id="leftHandle"
+            class="endpoint-handle"
+            type="button"
+            aria-label="拖动左端点旋转，右端点保持固定"
+            title="拖动左端点旋转"
+          ></button>
+          <button
+            id="rightHandle"
+            class="endpoint-handle"
+            type="button"
+            aria-label="拖动右端点旋转，左端点保持固定"
+            title="拖动右端点旋转"
+          ></button>
+          <div id="navPositive" class="nav-cluster nav-cluster-positive">
+            <button class="nav-button" type="button" data-command="back" aria-label="后退">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m14.5 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="nav-button" type="button" data-command="forward" aria-label="前进">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m9.5 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="nav-button" type="button" data-command="reload" aria-label="刷新">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18.2 8.1A7.5 7.5 0 1 0 19.4 14M18.7 3.8v4.8H14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <div id="navNegative" class="nav-cluster nav-cluster-negative">
+            <button class="nav-button" type="button" data-command="back" aria-label="后退">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m14.5 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="nav-button" type="button" data-command="forward" aria-label="前进">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m9.5 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="nav-button" type="button" data-command="reload" aria-label="刷新">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18.2 8.1A7.5 7.5 0 1 0 19.4 14M18.7 3.8v4.8H14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <div
+            id="dragGrip"
+            class="drag-grip"
+            role="button"
+            tabindex="0"
+            title="拖动分屏线"
+            aria-label="拖动橙线。方向键移动，按住 Shift 加左右方向键旋转。"
+          >
+            <span class="grip-dot" aria-hidden="true"></span>
+            <span class="grip-dot" aria-hidden="true"></span>
+            <span class="grip-dot" aria-hidden="true"></span>
+            <span class="grip-dot" aria-hidden="true"></span>
+          </div>
+          <button
+            id="rotateHandle"
+            class="rotate-handle"
+            type="button"
+            aria-label="拖动以旋转分屏线"
+            hidden
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.2 8.1A7.5 7.5 0 1 0 19.4 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M18.7 3.8v4.8H14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <output id="angleBadge" class="angle-badge" aria-live="polite">0°</output>
+      </div>
+
+      <div class="edge-label edge-label-a" aria-hidden="true">A</div>
+      <div class="edge-label edge-label-b" aria-hidden="true">B</div>
+
+      <button
+        id="panelToggle"
+        class="panel-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="controlPanel"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span>设置</span>
+      </button>
+
+      <div id="videoModeBadge" class="video-mode-badge" hidden>
+        视频兼容分屏已启用 · 暂停后恢复自由角度
+      </div>
+
+      <section id="controlPanel" class="control-panel" aria-label="分屏设置" hidden>
+        <header class="panel-header">
+          <div>
+            <p class="panel-kicker">这里是设置喵</p>
+            <h1>选择两个网页</h1>
+          </div>
+          <button id="panelClose" class="icon-button" type="button" aria-label="关闭设置">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </header>
+
+        <form id="addressForm" class="address-form" novalidate>
+          <label class="url-field">
+            <span><i class="pane-dot pane-dot-a"></i>网页 A</span>
+            <input id="addressA" type="text" inputmode="url" autocomplete="url" spellcheck="false" placeholder="https://example.com">
+          </label>
+          <label class="url-field">
+            <span><i class="pane-dot pane-dot-b"></i>网页 B</span>
+            <input id="addressB" type="text" inputmode="url" autocomplete="url" spellcheck="false" placeholder="https://www.w3.org">
+          </label>
+          <p id="addressMessage" class="panel-message" role="status" aria-live="polite"></p>
+          <div class="panel-actions">
+            <button id="applyAddresses" class="button button-primary" type="submit">应用网页</button>
+            <button id="swapPanes" class="button" type="button">交换位置</button>
+            <button id="resetDivider" class="button" type="button">复位橙线</button>
+          </div>
+        </form>
+
+        <fieldset class="rotation-settings">
+          <legend>旋转方式</legend>
+          <label>
+            <input id="rotationTwoPoint" type="radio" name="rotationMode" value="two-point" checked>
+            <span>
+              <strong>两端点旋转</strong>
+              <small>拖动一端，另一端固定</small>
+            </span>
+          </label>
+          <label>
+            <input id="rotationCenter" type="radio" name="rotationMode" value="center">
+            <span>
+              <strong>中心旋转</strong>
+              <small>点击中心点显示旋转按钮</small>
+            </span>
+          </label>
+        </fieldset>
+
+        <section class="appearance-settings" aria-labelledby="appearanceTitle">
+          <div class="appearance-heading">
+            <h2 id="appearanceTitle">橙线外观</h2>
+            <p>颜色与粗细会实时应用并保存</p>
+          </div>
+          <div class="appearance-actions">
+            <button
+              id="colorPickerToggle"
+              class="appearance-trigger"
+              type="button"
+              aria-expanded="false"
+              aria-controls="colorPopover"
+            >
+              <span id="currentColorSwatch" class="current-color-swatch" aria-hidden="true"></span>
+              <span class="appearance-copy">
+                <strong>颜色</strong>
+                <small id="colorValue">#FF761A</small>
+              </span>
+            </button>
+            <button
+              id="thicknessToggle"
+              class="appearance-trigger"
+              type="button"
+              aria-expanded="false"
+              aria-controls="thicknessPopover"
+            >
+              <span class="thickness-symbol" aria-hidden="true"></span>
+              <span class="appearance-copy">
+                <strong>粗细</strong>
+                <small id="thicknessValue">6 px</small>
+              </span>
+            </button>
+          </div>
+
+          <div class="nav-color-actions" aria-label="网页导航按钮颜色">
+            <button
+              id="backColorToggle"
+              class="appearance-trigger"
+              type="button"
+              aria-expanded="false"
+              aria-controls="navColorPopover"
+            >
+              <span id="backButtonSwatch" class="current-color-swatch" aria-hidden="true"></span>
+              <span class="appearance-copy">
+                <strong>返回按钮</strong>
+                <small id="backButtonColorValue">#80F0FF</small>
+              </span>
+            </button>
+            <button
+              id="forwardColorToggle"
+              class="appearance-trigger"
+              type="button"
+              aria-expanded="false"
+              aria-controls="navColorPopover"
+            >
+              <span id="forwardButtonSwatch" class="current-color-swatch" aria-hidden="true"></span>
+              <span class="appearance-copy">
+                <strong>下一页按钮</strong>
+                <small id="forwardButtonColorValue">#FFA8F3</small>
+              </span>
+            </button>
+          </div>
+
+          <div id="navColorPopover" class="appearance-popover" hidden>
+            <p id="navColorTitle" class="appearance-popover-title">选择返回按钮颜色</p>
+            <div class="color-presets" aria-label="导航按钮预设颜色">
+              <button class="nav-color-swatch" type="button" data-color="#80f0ff" aria-label="青蓝"></button>
+              <button class="nav-color-swatch" type="button" data-color="#ffa8f3" aria-label="粉色"></button>
+              <button class="nav-color-swatch" type="button" data-color="#ff761a" aria-label="橙色"></button>
+              <button class="nav-color-swatch" type="button" data-color="#e5484d" aria-label="红色"></button>
+              <button class="nav-color-swatch" type="button" data-color="#e8a317" aria-label="黄色"></button>
+              <button class="nav-color-swatch" type="button" data-color="#39a96b" aria-label="绿色"></button>
+              <button class="nav-color-swatch" type="button" data-color="#3978e6" aria-label="蓝色"></button>
+              <button class="nav-color-swatch" type="button" data-color="#9b5de5" aria-label="紫色"></button>
+            </div>
+            <label class="custom-color-row">
+              <span>自定义颜色</span>
+              <input id="navCustomColor" type="color" value="#80f0ff" aria-label="选择导航按钮自定义颜色">
+            </label>
+          </div>
+
+          <div id="colorPopover" class="appearance-popover" hidden>
+            <p class="appearance-popover-title">选择预设颜色</p>
+            <div class="color-presets" aria-label="预设颜色">
+              <button class="color-swatch" type="button" data-color="#ff761a" aria-label="橙色"></button>
+              <button class="color-swatch" type="button" data-color="#e5484d" aria-label="红色"></button>
+              <button class="color-swatch" type="button" data-color="#e8a317" aria-label="黄色"></button>
+              <button class="color-swatch" type="button" data-color="#39a96b" aria-label="绿色"></button>
+              <button class="color-swatch" type="button" data-color="#16a6a1" aria-label="青色"></button>
+              <button class="color-swatch" type="button" data-color="#3978e6" aria-label="蓝色"></button>
+              <button class="color-swatch" type="button" data-color="#9b5de5" aria-label="紫色"></button>
+              <button class="color-swatch" type="button" data-color="#20201d" aria-label="黑色"></button>
+            </div>
+            <label class="custom-color-row">
+              <span>自定义颜色</span>
+              <input id="customColor" type="color" value="#ff761a" aria-label="选择自定义颜色">
+            </label>
+          </div>
+
+          <div id="thicknessPopover" class="appearance-popover" hidden>
+            <label class="thickness-label" for="thicknessRange">
+              <span>细</span>
+              <output id="thicknessOutput" for="thicknessRange">6 px</output>
+              <span>粗</span>
+            </label>
+            <input
+              id="thicknessRange"
+              class="thickness-range"
+              type="range"
+              min="2"
+              max="20"
+              step="1"
+              value="6"
+            >
+          </div>
+
+          <button
+            id="audioToggle"
+            class="audio-toggle"
+            type="button"
+            aria-pressed="false"
+          >
+            <span class="audio-icon" aria-hidden="true">
+              <i></i><i></i><i></i><i></i>
+            </span>
+            <span class="audio-copy">
+              <strong>音频响应</strong>
+              <small id="audioStatus">点击授权系统或标签页音频</small>
+            </span>
+            <span class="audio-switch" aria-hidden="true"><i></i></span>
+          </button>
+          <p class="audio-note">
+            浏览器会要求选择共享屏幕或标签页，并勾选“系统音频/标签页音频”。扩展只分析音量，不读取或上传画面。
+          </p>
+        </section>
+
+        <div class="panel-links">
+          <button id="openPaneA" class="text-button" type="button">在新标签打开 A</button>
+          <button id="openPaneB" class="text-button" type="button">在新标签打开 B</button>
+        </div>
+
+        <p class="panel-note">
+          拖动橙线移动。两端点模式下，拖动左侧或右侧小点会以另一端为轴旋转；中心模式下，点击中央小点显示旋转按钮。部分网站禁止被其他页面嵌入，遇到空白页时可使用“在新标签打开”。
+        </p>
+      </section>
+
+      <div id="gestureHint" class="gesture-hint" aria-hidden="true">
+        <span>拖动橙线</span>
+        <span class="hint-separator"></span>
+        <span id="gestureAction">拖动两端小点旋转</span>
+      </div>
+    </main>
+
+    <script type="module" src="split.js"></script>
+  </body>
+</html>
